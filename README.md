@@ -51,6 +51,23 @@ https://www.youtube.com/watch?v=jjckEViwt_o
 https://www.youtube.com/watch?v=Ih5Mr93E-2c&list=PLn5tx65egy3c0LeTpRxz_iHsbOcYhNFHF
 
 
+https://www.youtube.com/watch?v=9RN2Wr8xvro
+
+
+https://www.youtube.com/watch?v=oJNHXPs0XDk
+
+
+https://www.youtube.com/watch?v=ILsA4nyG7I0
+
+
+https://www.youtube.com/watch?v=hfMk-kjRv4c
+
+
+### llm course
+
+https://huggingface.co/learn/llm-course/chapter1/1
+
+
 # micrograd-neural-network-playbook
 
 A tiny Autograd engine (with a bite! :)). Implements backpropagation (reverse-mode autodiff) over a dynamically built DAG and a small neural networks library on top of it with a PyTorch-like API. Both are tiny, with about 100 and 50 lines of code respectively. The DAG only operates over scalar values, so e.g. we chop up each neuron into all of its individual tiny adds and multiplies. However, this is enough to build up entire deep neural nets doing binary classification, as the demo notebook shows. Potentially useful for educational purposes.
