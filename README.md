@@ -63,6 +63,10 @@ https://www.youtube.com/watch?v=ILsA4nyG7I0
 https://www.youtube.com/watch?v=hfMk-kjRv4c
 
 
+### deepseek good explanation
+
+https://www.youtube.com/watch?v=jjckEViwt_o
+
 ### llm course
 
 https://huggingface.co/learn/llm-course/chapter1/1
