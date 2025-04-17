@@ -1,3 +1,56 @@
+# Youtube videos we are following 
+
+https://www.youtube.com/watch?v=VMj-3S1tku0&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ
+
+
+https://www.youtube.com/watch?v=kCc8FmEb1nY&t=608s
+
+
+https://www.youtube.com/watch?v=1aM1KYvl4Dw
+
+
+https://www.youtube.com/watch?v=5avSMc79V-w
+
+
+https://www.youtube.com/watch?v=RFaFmkCEGEs
+
+
+https://www.youtube.com/watch?v=XJ7HLz9VYz0&list=PLRqwX-V7Uu6aCibgK1PTWWu9by6XFdCfh
+
+
+### how does gpu works
+
+https://www.youtube.com/watch?v=OUzm06YaUsI
+
+
+### RNN
+
+https://www.youtube.com/watch?v=AsNTP8Kwu80&list=PLjYRg5G2xJSnccwkbKQOI6AS2yITSllow
+
+
+----------------------------------------------------------------------------
+
+https://www.youtube.com/watch?v=Rs_rAxEsAvI
+
+
+https://www.datacamp.com/tutorial/minimax-algorithm-for-ai-in-python
+
+
+https://www.datacamp.com/tutorial/tutorial-monte-carlo
+
+
+https://www.youtube.com/watch?v=mK_PfqM88OY&list=PLPTV0NXA_ZSj6tNyn_UadmUeU3Q3oR-hu&index=5
+
+
+https://www.youtube.com/watch?v=uxeqipNwuP0
+
+
+https://www.youtube.com/watch?v=jjckEViwt_o
+
+
+https://www.youtube.com/watch?v=Ih5Mr93E-2c&list=PLn5tx65egy3c0LeTpRxz_iHsbOcYhNFHF
+
+
 # micrograd-neural-network-playbook
 
 A tiny Autograd engine (with a bite! :)). Implements backpropagation (reverse-mode autodiff) over a dynamically built DAG and a small neural networks library on top of it with a PyTorch-like API. Both are tiny, with about 100 and 50 lines of code respectively. The DAG only operates over scalar values, so e.g. we chop up each neuron into all of its individual tiny adds and multiplies. However, this is enough to build up entire deep neural nets doing binary classification, as the demo notebook shows. Potentially useful for educational purposes.
