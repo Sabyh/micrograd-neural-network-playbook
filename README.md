@@ -9,6 +9,12 @@ https://www.youtube.com/watch?v=kCc8FmEb1nY&t=608s
 https://www.youtube.com/watch?v=1aM1KYvl4Dw
 
 
+https://www.youtube.com/watch?v=yyHU5SJ-BPA
+
+
+https://github.com/tinygrad/teenygrad
+
+
 https://www.youtube.com/watch?v=5avSMc79V-w
 
 
