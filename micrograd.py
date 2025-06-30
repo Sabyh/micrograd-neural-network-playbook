@@ -45,7 +45,8 @@ class Value:
         self.data = data
         self._prev = set(_children)
         self._op = _op
-        self.grad = 0.0 
+        self.grad = 0.0
+        self.backward = lambda: None 
         self.label = label if label is not None else str(data)
         
     def __repr__(self):
@@ -53,15 +54,32 @@ class Value:
     
     def __add__(self, other):
         if isinstance(other, Value):
-            # FIXED: consistent parameter naming, no asterisks
             return Value(self.data + other.data, _children=(self, other), _op='+')
-        return Value(self.data + other, _children=(self,), _op='+')  # FIXED: single child for scalar
-    
+        out = Value(self.data + other, _children=(self,), _op='+')
+        def _backward_add(self, other, out):
+          self.grad += 1.0 * out.grad
+          other.grad += 1.0 * out.grad
+        out.backward = lambda: _backward_add(self, other, out)
+        return out
+
     def __mul__(self, other):
         if isinstance(other, Value):
-            # FIXED: consistent parameter naming with underscores
             return Value(self.data * other.data, _children=(self, other), _op='*')
-        return Value(self.data * other, _children=(self,), _op='*')  # FIXED: single child for scalar
+        out = Value(self.data * other, _children=(self,), _op='*')
+        def _backward():
+          self.grad += other.data * out.grad
+          other.grad += self.data * out.grad
+        out.backward = _backward
+        return out 
+      
+    def tanh(self):
+        x = self.data
+        t = (math.exp(2*x) - 1) / (math.exp(2*x) + 1)
+        out = Value(t, _children=(self,), _op='tanh')
+        def _backward():
+          self.grad = (1 - t**2) * out.grad
+        out.backward = _backward
+        return out
 
 # Your original test code (unchanged)
 a = Value(2.0, label='a')
@@ -119,13 +137,6 @@ def draw_dot(root):
 
   return dot
 
-# Save the graph to see it
-try:
-    dot.render('computational_graph', cleanup=True)
-    print("Graph saved as computational_graph.svg")
-except Exception as e:
-    print(f"Could not save graph: {e}")
-    print("Make sure Graphviz is installed: pip install graphviz")
 
 def lol():
   
@@ -155,13 +166,20 @@ print("Derivative of L with respect to A \n")
 print("As we bumped A by h, we can see the derivative is close to the value we calculated before.")  
 lol()
 
-L.grad = 1.0
-# Test the fixed version
-dot = draw_dot(L)
-print("Graph created successfully!")
+L.grad = 1.0  
+a.data += 0.01 * a.grad
+b.data += 0.01 * b.grad
+c.data += 0.01 * c.grad
+f.data += 0.01 * f.grad
+
+e = a * b
+d = e + c
+L = d * f
+
+print(L.data)
 
 
-
+# Save the graph to see it
 L = d * f
 # what will be dl/dd?
 # dl/dd = f.data
@@ -174,5 +192,34 @@ L = d * f
 # df cancel out
 # hf/h
 # so f is the answer
+
+
+# inputs x1,x2
+x1 = Value(2.0, label='x1')
+x2 = Value(0.0, label='x2')
+# weights w1,w2
+w1 = Value(-3.0, label='w1')
+w2 = Value(1.0, label='w2')
+# bias of the neuron
+b = Value(6.8813735870195432, label='b')
+# x1*w1 + x2*w2 + b
+x1w1 = x1*w1; x1w1.label = 'x1*w1'
+x2w2 = x2*w2; x2w2.label = 'x2*w2'
+x1w1x2w2 = x1w1 + x2w2; x1w1x2w2.label = 'x1*w1 + x2*w2'
+n = x1w1x2w2 + b; n.label = 'n'
+o =  n.tanh()
+o.grad = 1.0
+o.backward()
+n.backward()
+x1w1x2w2.backward()
+x1w1.backward()
+x2w2.backward()
+dot = draw_dot(o)
+try:
+    dot.render('computational_graph', cleanup=True)
+    print("Graph saved as computational_graph.svg")
+except Exception as e:
+    print(f"Could not save graph: {e}")
+    print("Make sure Graphviz is installed: pip install graphviz")
 
 
