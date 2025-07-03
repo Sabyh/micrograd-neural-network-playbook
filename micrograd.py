@@ -46,30 +46,26 @@ class Value:
         self._prev = set(_children)
         self._op = _op
         self.grad = 0.0
-        self.backward = lambda: None 
+        self._backward = lambda: None 
         self.label = label if label is not None else str(data)
         
     def __repr__(self):
         return f"Value({self.data})"
     
     def __add__(self, other):
-        if isinstance(other, Value):
-            return Value(self.data + other.data, _children=(self, other), _op='+')
-        out = Value(self.data + other, _children=(self,), _op='+')
-        def _backward_add(self, other, out):
+        out = Value(self.data + other.data, _children=(self, other), _op='+')
+        def _backward():
           self.grad += 1.0 * out.grad
           other.grad += 1.0 * out.grad
-        out.backward = lambda: _backward_add(self, other, out)
+        out._backward = _backward
         return out
 
     def __mul__(self, other):
-        if isinstance(other, Value):
-            return Value(self.data * other.data, _children=(self, other), _op='*')
-        out = Value(self.data * other, _children=(self,), _op='*')
+        out = Value(self.data * other.data, _children=(self,other), _op='*')
         def _backward():
           self.grad += other.data * out.grad
           other.grad += self.data * out.grad
-        out.backward = _backward
+        out._backward = _backward
         return out 
       
     def tanh(self):
@@ -78,8 +74,26 @@ class Value:
         out = Value(t, _children=(self,), _op='tanh')
         def _backward():
           self.grad = (1 - t**2) * out.grad
-        out.backward = _backward
+        out._backward = _backward
         return out
+      
+    def backward(self):
+      topo = []
+      visited = set()
+      def build_topo(v):
+        if v not in visited:
+            visited.add(v)
+            for child in v._prev:
+              build_topo(child)
+            topo.append(v)
+      build_topo(self)
+      self.grad = 1.0
+      print("TOPPPPPPPPPOOOOOO")
+      print(topo)
+      for node in reversed(topo):
+        node._backward()
+
+
 
 # Your original test code (unchanged)
 a = Value(2.0, label='a')
@@ -208,12 +222,23 @@ x2w2 = x2*w2; x2w2.label = 'x2*w2'
 x1w1x2w2 = x1w1 + x2w2; x1w1x2w2.label = 'x1*w1 + x2*w2'
 n = x1w1x2w2 + b; n.label = 'n'
 o =  n.tanh()
+
+
 o.grad = 1.0
+# o.backward()
+# n.backward()
+# x1w1x2w2.backward()
+# x1w1.backward()
+# x2w2.backward()
+# w1.backward()
+# x1.backward()
+# w2.backward()
+# x2.backward()
+# b.backward()
+
+
 o.backward()
-n.backward()
-x1w1x2w2.backward()
-x1w1.backward()
-x2w2.backward()
+
 dot = draw_dot(o)
 try:
     dot.render('computational_graph', cleanup=True)
