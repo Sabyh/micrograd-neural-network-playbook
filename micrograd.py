@@ -42,40 +42,42 @@ print(derivative)
 # Fixed Value class - only minimal changes
 class Value:
     def __init__(self, data, _children=(), _op='', label=None):
-        self.data = data
-        self._prev = set(_children)
-        self._op = _op
-        self.grad = 0.0
-        self._backward = lambda: None 
-        self.label = label if label is not None else str(data)
+      self.data = data
+      self._prev = set(_children)
+      self._op = _op
+      self.grad = 0.0
+      self._backward = lambda: None 
+      self.label = label if label is not None else str(data)
         
     def __repr__(self):
-        return f"Value({self.data})"
+      return f"Value({self.data})"
     
     def __add__(self, other):
-        out = Value(self.data + other.data, _children=(self, other), _op='+')
-        def _backward():
-          self.grad += 1.0 * out.grad
-          other.grad += 1.0 * out.grad
-        out._backward = _backward
-        return out
+      other = other if isinstance(other, Value) else Value(other)
+      out = Value(self.data + other.data, _children=(self, other), _op='+')
+      def _backward():
+        self.grad += 1.0 * out.grad
+        other.grad += 1.0 * out.grad
+      out._backward = _backward
+      return out
 
     def __mul__(self, other):
-        out = Value(self.data * other.data, _children=(self,other), _op='*')
-        def _backward():
-          self.grad += other.data * out.grad
-          other.grad += self.data * out.grad
-        out._backward = _backward
-        return out 
+      other = other if isinstance(other, Value) else Value(other)
+      out = Value(self.data * other.data, _children=(self,other), _op='*')
+      def _backward():
+        self.grad += other.data * out.grad
+        other.grad += self.data * out.grad
+      out._backward = _backward
+      return out 
       
     def tanh(self):
-        x = self.data
-        t = (math.exp(2*x) - 1) / (math.exp(2*x) + 1)
-        out = Value(t, _children=(self,), _op='tanh')
-        def _backward():
-          self.grad = (1 - t**2) * out.grad
-        out._backward = _backward
-        return out
+      x = self.data
+      t = (math.exp(2*x) - 1) / (math.exp(2*x) + 1)
+      out = Value(t, _children=(self,), _op='tanh')
+      def _backward():
+        self.grad += (1 - t**2) * out.grad
+      out._backward = _backward
+      return out
       
     def backward(self):
       topo = []
@@ -239,7 +241,13 @@ o.grad = 1.0
 
 o.backward()
 
-dot = draw_dot(o)
+a = Value(3.0, label='a')
+
+b = a + a; b.label = 'b'
+b.backward()
+
+
+dot = draw_dot(b)
 try:
     dot.render('computational_graph', cleanup=True)
     print("Graph saved as computational_graph.svg")
