@@ -69,7 +69,52 @@ class Value:
         other.grad += self.data * out.grad
       out._backward = _backward
       return out 
-      
+    
+    def __rmul__(self, other):
+      return self * other
+    
+    def exp(self):
+      x = self.data
+      out += Value(math.exp(x), _children=(self,), _op='exp')
+      def _backward():
+        self.grad += math.exp(x) * out.grad
+      out._backward = _backward
+      return out
+    
+    def __neg__(self):
+      out = Value(-self.data, _children=(self,), _op='neg')
+      def _backward():
+        self.grad += -1.0 * out.grad
+      out._backward = _backward
+      return out
+    
+    def __sub__(self, other):
+      other = other if isinstance(other, Value) else Value(other)
+      out = Value(self.data - other.data, _children=(self, other), _op='-')
+      def _backward():
+        self.grad += 1.0 * out.grad
+        other.grad += -1.0 * out.grad
+      out._backward = _backward
+      return out
+    
+    def __truediv__(self, other):
+      other = other if isinstance(other, Value) else Value(other)
+      out = Value(self.data / other.data, _children=(self, other), _op='/')
+      def _backward():
+        self.grad += (1.0 / other.data) * out.grad
+        other.grad += (-self.data / (other.data ** 2)) * out.grad
+      out._backward = _backward
+      return out
+    
+    def __rtruediv__(self, other):  
+      other = other if isinstance(other, Value) else Value(other)
+      out = Value(other.data / self.data, _children=(self, other), _op='/')
+      def _backward():
+        self.grad += (-other.data / (self.data ** 2)) * out.grad
+        other.grad += (1.0 / self.data) * out.grad
+      out._backward = _backward
+      return out
+    
     def tanh(self):
       x = self.data
       t = (math.exp(2*x) - 1) / (math.exp(2*x) + 1)
